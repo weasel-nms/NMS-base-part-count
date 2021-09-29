@@ -3,7 +3,7 @@
 # NMS base part count
 Counts all base parts in each of your No Man's Sky bases and freighter, and displays a listing of all entries in decreasing order of parts quantity.
 
-[<img alt="JSON export" src="images/base-part-count-screenshot.jpg" width="100%"/>](https://raw.githubusercontent.com/weasel-nms/NMS-base-part-count/releases/download/v1.0/images/base-part-count-screenshot.jpg)
+[<img alt="JSON export" src="images/base-part-count-screenshot.jpg" width="50%"/>](https://raw.githubusercontent.com/weasel-nms/NMS-base-part-count/releases/download/v1.0/images/base-part-count-screenshot.jpg)
 
 ### Why the number of base parts matters
 No Man's Sky has a hard limit of 16,000 total base parts across all bases (including your freighter) within one save file.  After reaching this limit, you're be prevented from placing *any* additional parts within a base.
