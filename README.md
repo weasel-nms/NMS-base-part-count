@@ -10,7 +10,7 @@ No Man's Sky has a hard limit of 16,000 total base parts across all bases (inclu
 
 Further, it's often difficult to understand which bases have a high part count.  Save editors do divulge this information, but only one base at a time.  This is aimed at providing a top-down view of the spread of your base part counts to make decisions about how best to allocate this most precious resource.
 
-For greater detail on what counts towards your totals and the technical details of verifying this limit, see this [breakdown](https://www.reddit.com/r/NoMansSkyTheGame/comments/jzmdnz/global_base_part_limit_analysis_what_actually/) on Reddit.
+For greater detail on what counts towards your totals and the technical details of verifying this limit, see this [discussion](https://www.reddit.com/r/NoMansSkyTheGame/comments/jzmdnz/global_base_part_limit_analysis_what_actually/) on Reddit.
 
 ### How it works
 This tool is composed of two simple parts:
