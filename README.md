@@ -29,7 +29,7 @@ Before running the tool, you'll need to create a JSON export of your No Man's Sk
 Double-click the shortcut to run it.  A file selection window will open, which you then use to choose the JSON file you just exported.  The script will munch on the data, and display the sorted list.
 
 ### Download
-* [GitHub](https://github.com/weasel-nms/NMS-base-part-count/releases/download/v1.0/NoMansSkyBasePartCountV1.0.zip) (NoMansSkyBasePartCountv1.0.zip)
+* [GitHub](https://github.com/weasel-nms/NMS-base-part-count/releases/download/v2.0/NoMansSkyBasePartCountV2.0.zip) (NoMansSkyBasePartCountv2.0.zip)
 
 ### Contact
 Feel free to contact me at the NMS Modding discord at https://discord.gg/5ercjgdy using `@weasel`.
