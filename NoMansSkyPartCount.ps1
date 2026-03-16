@@ -1,20 +1,4 @@
 function picker {
-    # ask if we should show parts for a specific base or exit
-    $host.ui.RawUI.ForegroundColor = "Yellow"
-    write-host "Would you like to see the parts for a specific base? "
-    $result = Read-Host "Answer (Y)es to select a base, or (N)o to exit"
-    if ($result -ne "y" -and $result -ne "n") {
-        write-host "please answer yes (Y) or no (N)" -foregroundcolor red
-        picker
-    }
-    switch ($result) {
-        Y { "Proceeding to select a base..." }
-        N { "Exiting..." }
-    }
-    if ($result -eq "n") {
-        exit
-    }
-        
     #build a part id to name lookup list
     $namemap = @()
     $appendtonamemap = [PSCustomObject]@{id = "^BUILDDECALNUM0"; name = "'0' Decal"}; $namemap += ($appendtonamemap)
@@ -454,7 +438,7 @@ function picker {
     $appendtonamemap = [PSCustomObject]@{id = "^BYTEBEATSWITCH"; name = "Bytebeat Switch"}; $namemap += ($appendtonamemap)
     $appendtonamemap = [PSCustomObject]@{id = "^BASE_CONTOURPOD"; name = "Cable Pod"}; $namemap += ($appendtonamemap)
     $appendtonamemap = [PSCustomObject]@{id = "^S_POSTER10"; name = "Cactus Flesh Poster"}; $namemap += ($appendtonamemap)
-    $appendtonamemap = [PSCustomObject]@{id = "^DECAL_CAFE"; name = "Café 42 Decal"}; $namemap += ($appendtonamemap)
+    $appendtonamemap = [PSCustomObject]@{id = "^DECAL_CAFE"; name = "CafÃ© 42 Decal"}; $namemap += ($appendtonamemap)
     $appendtonamemap = [PSCustomObject]@{id = "^BASE_HYDROPOD"; name = "Calcishroom"}; $namemap += ($appendtonamemap)
     $appendtonamemap = [PSCustomObject]@{id = "^BASE_WPLANT3"; name = "Candelabra Bloom"}; $namemap += ($appendtonamemap)
     $appendtonamemap = [PSCustomObject]@{id = "^BUILDCANRACK"; name = "Canister Rack"}; $namemap += ($appendtonamemap)
@@ -2079,7 +2063,22 @@ function picker {
     $appendtonamemap = [PSCustomObject]@{id = "^WALLLIGHTYELLOW"; name = "Yellow Light"}; $namemap += ($appendtonamemap)
     $appendtonamemap = [PSCustomObject]@{id = "^B_GEN_0"; name = "Zenith-Class Reactor"}; $namemap += ($appendtonamemap)
 
-    
+    # ask if we should show parts for a specific base or exit
+    $host.ui.RawUI.ForegroundColor = "Yellow"
+    write-host "Would you like to see the parts for a specific base? "
+    $result = Read-Host "Answer (Y)es to select a base, or (N)o to exit"
+    if ($result -ne "y" -and $result -ne "n") {
+        write-host "please answer yes (Y) or no (N)" -foregroundcolor red
+        picker
+    }
+    switch ($result) {
+        Y { "Proceeding to select a base..." }
+        N { "Exiting..." }
+    }
+    if ($result -eq "n") {
+        exit
+    }
+   
     #pop up a GUI window to select the base to list
     $form = New-Object System.Windows.Forms.Form
     $form.Text = 'Select a base:'
@@ -2130,10 +2129,11 @@ function picker {
     }
 
     # translate selected base's part ids to names and display the quantity breakdown per part
-    $specificbasepartcount = ($convertedcontents.$BaseContext.$PlayerStateData.$PersistentPlayerBases | where {$_.name -eq "$x"}).objects.objectid | group | select count, name #| Sort-Object count, name -Descending
+    $specificbasepartcount = ($convertedcontents.BaseContext.PlayerStateData.PersistentPlayerBases | where {$_.name -eq "$x"}).objects.objectid | group | select count, name #| Sort-Object count, name -Descending
     foreach ($specificbasepart in $specificbasepartcount) {
         $specificbasepart.name = ($namemap | where {$_.id -eq $specificbasepart.name}).name
     }
+    #$specificbasepartcount = $convertedcontents.BaseContext.PlayerStateData.PersistentPlayerBases | Where { $_.name -eq $x } | ForEach { $_.objects.objectid } | ForEach {($namemap | Where { $_.id -eq $_ }).name} | Group | Select Count, Name
     $host.ui.RawUI.ForegroundColor = "Green"
     write-host "Base parts used in base: $x"
     $specificbasepartcount | Sort-Object @{Expression="count";Descending=$true}, name | format-table
@@ -2153,15 +2153,8 @@ $FileBrowser.Title = "Select a No Man's Sky JSON export file (*.JSON)"
 [void]$FileBrowser.ShowDialog()
 $jsonfile = $FileBrowser.FileNames
 
-#set vars depending on file type
+#check that a json file is selected
 if ($jsonfile -like "*.json") {
-    $BaseContext = "BaseContext"
-    $PlayerStateData = "PlayerStateData"
-    $PersistentPlayerBases = "PersistentPlayerBases"
-    $Objects = "Objects"
-    $Name = "Name"
-    $basetype = "basetype"
-    $PersistentBaseTypes = "PersistentBaseTypes"
     write-host "Selected file is: $jsonfile" -ForegroundColor Green
 }
 else {
@@ -2181,22 +2174,35 @@ if ($savefilecontents -eq $null) {
     exit
 }
 # Read the file line-by-line
+write-host "Checking for and removing bad characters in text..." -ForegroundColor Yellow
 $fixedsavefilecontents = $savefilecontents.Replace('\"#', '#').Replace('/', '').Replace('\\\"', '').Replace('\x', 'x')
 
 #load save file as a PowerShell object to be able to parse it
-write-host "Converting JSON content..." -ForegroundColor Yellow
+write-host "Converting JSON content to programmatic objects for querying..." -ForegroundColor Yellow
 $convertedcontents = $fixedsavefilecontents | ConvertFrom-Json
 
 #loop through each base and get info, and store in temp PowerShell object
 [System.Collections.ArrayList]$basepartarray = @()
-foreach ($base in $convertedcontents.$BaseContext.$PlayerStateData.$PersistentPlayerBases) {
-	$basepartcount = ($base.$Objects | measure).count
-	$basename = $base.$name
-    if ($base.$basetype.$PersistentBaseTypes -eq "FreighterBase") {
-        $basename = "Freighter: " + $convertedcontents.basecontext.playerstatedata.PlayerFreighterName
+foreach ($base in $convertedcontents.BaseContext.PlayerStateData.PersistentPlayerBases) {
+	$basepartcount = ($base.Objects | measure).count
+    if ($base.basetype.PersistentBaseTypes -eq "FreighterBase") {
+        $base.name = $convertedcontents.basecontext.playerstatedata.PlayerFreighterName
     }
-	if ($base.$basetype.$PersistentBaseTypes -eq "HomePlanetBase" -or $base.$basetype.$PersistentBaseTypes -eq "FreighterBase") {
+    if ($base.basetype.PersistentBaseTypes -eq "PlayerShipBase") {
+        $corvetteid = $base.userdata
+        $base.name = $convertedcontents.basecontext.playerstatedata.ShipOwnership[$corvetteid].Name
+    }
+	$basename = $base.name
+	$basetype = "Planetary  "
+    if ($base.basetype.PersistentBaseTypes -eq "FreighterBase") {
+        $basetype = "Freighter  "
+    }
+    if ($base.basetype.PersistentBaseTypes -eq "PlayerShipBase") {
+        $basetype = "Corvette  "
+    }
+    if ($base.basetype.PersistentBaseTypes -eq "HomePlanetBase" -or $base.basetype.PersistentBaseTypes -eq "FreighterBase" -or $base.basetype.PersistentBaseTypes -eq "PlayerShipBase") {
 	    $appendtobasepartlist = [PSCustomObject]@{
+            Basetype = $basetype
             Basename = $basename
             Basepartcount = $basepartcount
         }
@@ -2204,13 +2210,13 @@ foreach ($base in $convertedcontents.$BaseContext.$PlayerStateData.$PersistentPl
     }
 }
 if ($basepartarray.count -gt 1) {
-    $basepartarray = $basepartarray | sort-object -Property @{Expression = "Basepartcount"; Descending = $true}, basename
+    $basepartarray = $basepartarray | sort-object -Property @{Expression = "Basetype"; Descending = $true},@{Expression = "Basepartcount"; Descending = $true}, basename
 }
 
 #display the base part counts
 $defaultcolor = $host.ui.RawUI.ForegroundColor
 $host.ui.RawUI.ForegroundColor = "Green"
-cls
+#cls
 write-host "Parts per base, sorted by part totals:"
 $basepartarray | ft
 $baseparttotal = ($basepartarray | measure-object -property Basepartcount -sum).sum
