@@ -1,7 +1,7 @@
 ![Platform](https://img.shields.io/badge/platform-windows-lightgrey)
 
 # NMS base part count
-Counts all base parts in each of your No Man's Sky bases and freighter, and displays a listing of all entries in decreasing order of parts quantity.  It will also let you see a breakdown by part type for a particular base.
+Counts all base parts in each of your No Man's Sky bases (including your freighter and corvettes), and displays a listing of all entries in decreasing order of parts quantity.  It will also let you see a breakdown by part type for a particular base.
 
 [<img alt="demo screens" src="images/base-part-count-demo.jpg" width="100%"/>](https://raw.githubusercontent.com/weasel-nms/NMS-base-part-count/releases/download/v2.0/images/base-part-count-demo.jpg)
 
